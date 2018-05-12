@@ -5,7 +5,7 @@
 #define __AI1_SET_SPEED__           1 // +++ ?
 #define __POS_AND_SPEED_CONTROL__   2 // +++ ?
 
-#define __CONTROL_MODE__            2
+#define __CONTROL_MODE__            __AI1_SET_SPEED__
 
 const float P = 8192.0f;
 const float Ts = 0.00125f;
@@ -212,6 +212,10 @@ void ADC_IRQHandler( void )
 #endif
 	}
 
+	if( !(ADC_FLAG_JEOC & ADC1->SR) ) {
+		return;
+	}
+
 	ADC_ClearITPendingBit( ADC1, ADC_IT_JEOC );
 	ADC_ClearITPendingBit( ADC2, ADC_IT_JEOC );
 
@@ -223,7 +227,7 @@ void ADC_IRQHandler( void )
 	}
 
 	enc_delta = TIM4->CNT;
-	if( 40 == ++counter_get_speed ) {
+	if( 20 == ++counter_get_speed ) {
 		volatile float rpm_m, rpm_t;
 
 		TIM4->CNT = 0;
@@ -285,7 +289,7 @@ void ADC_IRQHandler( void )
 		enc_delta_old = enc_delta;
 	}
 
-	lpFoc->f_rpm_mt *= 0.740;
+	lpFoc->f_rpm_mt *= 0.740; // ???
 	pv_speed = lpFoc->f_rpm_mt;
 	pv_speed = ffilter( (float)pv_speed, arrSpeedFB, 2 );
 
@@ -395,7 +399,7 @@ void ADC_IRQHandler( void )
 	///////////////////////////////////////////////////////////////////////////
 #if ( __CONTROL_MODE__ == __IQ_CONTROL__ )
 	lpFoc->Iq_des = ( ai0_filtered_value - 2047.0f );
-	//lpFoc->Iq_des = 500;
+	lpFoc->Iq_des = 500;
 	//lpFoc->Iq_des = 0;
 #endif
 	///////////////////////////////////////////////////////////////////////////

@@ -144,7 +144,7 @@ void svpwmInitADC( void )
 	ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
 	ADC_InitStructure.ADC_ScanConvMode = ENABLE;
 	ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
-	ADC_InitStructure.ADC_ExternalTrigConvEdge = 0;
+	ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
 	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
 	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
 	ADC_InitStructure.ADC_NbrOfConversion = 2;
@@ -165,14 +165,16 @@ void svpwmInitADC( void )
 	//- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	ADC_InjectedSequencerLengthConfig( ADC1, 2 );
 
-	ADC_ExternalTrigInjectedConvConfig( ADC1, ADC_ExternalTrigInjecConv_T1_CC4 );
+	ADC_ExternalTrigInjectedConvConfig( ADC1, ADC_ExternalTrigInjecConv_T1_CC4 ); // CC4 or TRGO ???
+	ADC_ExternalTrigInjectedConvConfig( ADC2, ADC_ExternalTrigInjecConv_T1_CC4 ); // CC4 or TRGO ???
+
 	ADC_ExternalTrigInjectedConvEdgeConfig( ADC1, ADC_ExternalTrigInjecConvEdge_Rising );
 	ADC_ExternalTrigInjectedConvEdgeConfig( ADC2, ADC_ExternalTrigInjecConvEdge_Rising );
 
 #ifdef FOC_ADC_Mode_Independent
 	/*
-	 * TIM1(CC4) -> ADC1
-	 * TIM8(CC1) -> ADC2***
+	 * TIM1( CC4 ) -> ADC1
+	 * TIM8( CC1 ) -> ADC2***
 	 */
 
 	ADC_InjectedSequencerLengthConfig( ADC2, 2 ); // 4 ???
@@ -191,7 +193,7 @@ void svpwmInitADC( void )
 
 #ifdef FOC_ADC_DualMode_RegSimult_InjecSimult
 	/*
-	 * TIM1(CC4) -> ADC1 and ADC2
+	 * TIM1( ADC_ExternalTrigInjecConv_T1_??? ) -> ADC1 and ADC2
 	 */
 
 	ADC_InjectedSequencerLengthConfig( ADC2, 2 );
@@ -222,7 +224,7 @@ void svpwmInitADC( void )
 	ADC_Cmd( ADC1, ENABLE );
 	ADC_Cmd( ADC2, ENABLE );
 
-	ADC_ITConfig( ADC1, ADC_IT_JEOC | ADC_IT_EOC, ENABLE );
+	ADC_ITConfig( ADC1, ADC_IT_JEOC /*| ADC_IT_EOC*/, ENABLE );
 
 	ADC_SoftwareStartConv( ADC1 );
 }
@@ -278,6 +280,7 @@ void GPIO_Configuration_Adc2( void )
 	GPIO_Init( GPIOC, &GPIO_InitStructure );
 }
 
+// Regular Channel:
 void DMAInit(void){
 	DMA_InitTypeDef DMA_InitStructure;
 

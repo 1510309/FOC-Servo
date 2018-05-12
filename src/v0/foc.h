@@ -34,6 +34,7 @@
 // -------------------------------------------------------=====================
 #define SAMPLING_TIME_CK		ADC_SampleTime_15Cycles
 
+// Regular Channel:
 #define ARRAYSIZE				( 2 * 4 )
 #define ADC1_DR					((uint32_t)0x4001204C)
 
