@@ -61,7 +61,7 @@ void focInit(LP_MC_FOC lpFocExt)
 	//pidInit( &pidSpeed, 1.8f, 0.01f, 0.0f, 1.0f );
 	//pidInit( &pidSpeed, 1.0f, 0.0081f, 0.0f, 1.0f ); // Motor without load
 
-	pidInit( &pidSpeed, 1.2f, 0.0081f, 0.0f, 1.0f );
+	pidInit( &pidSpeed, 0.6f, 0.0081f, 0.0f, 1.0f );
 
 	pidSetOutLimit( &pidSpeed, 0.999f, -0.999f );
 	pidSetIntegralLimit( &pidSpeed, 0.999f );
@@ -213,7 +213,7 @@ void ADC_IRQHandler( void )
 	}
 
 	if( !(ADC_FLAG_JEOC & ADC1->SR) ) {
-		return;
+		//return;
 	}
 
 	ADC_ClearITPendingBit( ADC1, ADC_IT_JEOC );
